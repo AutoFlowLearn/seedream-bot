@@ -39,16 +39,13 @@ def get_driver():
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
     opts.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
     
-    # Environment variables use karo (Dockerfile se aayenge)
-    chrome_bin = os.environ.get("CHROME_BIN", "/usr/bin/chromium")
-    driver_path = os.environ.get("CHROMEDRIVER_PATH", "/usr/bin/chromedriver")
+    # Chromium binary path
+    opts.binary_location = "/usr/bin/chromium"
     
-    opts.binary_location = chrome_bin
+    # Explicit chromedriver path
+    service = Service(executable_path="/usr/bin/chromedriver")
     
-    service = Service(driver_path)
     driver = webdriver.Chrome(service=service, options=opts)
-    
-    # Bot detection bypass
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     return driver
 
