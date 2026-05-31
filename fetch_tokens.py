@@ -9,7 +9,6 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 
 APP_URL        = os.environ.get("APP_URL", "")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "")
@@ -41,7 +40,7 @@ def get_driver():
     opts.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
     opts.binary_location = "/usr/bin/google-chrome"
     
-    service = Service(ChromeDriverManager().install())
+    service = Service("/usr/local/bin/chromedriver")
     driver  = webdriver.Chrome(service=service, options=opts)
     driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     return driver
