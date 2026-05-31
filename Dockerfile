@@ -2,7 +2,6 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install Chromium + Driver + Dependencies
 RUN apt-get update && apt-get install -y \
     chromium \
     chromium-driver \
@@ -16,20 +15,16 @@ RUN apt-get update && apt-get install -y \
     libxtst6 \
     ca-certificates \
     xvfb \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+    && ls -la /usr/bin/chromium /usr/bin/chromedriver
 
-# Install Python packages
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy code
 COPY fetch_tokens.py .
 
-# Environment variables
 ENV CHROME_BIN=/usr/bin/chromium
 ENV CHROMEDRIVER_PATH=/usr/bin/chromedriver
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE=1
 
-# Run
 CMD ["python", "-u", "fetch_tokens.py"]
