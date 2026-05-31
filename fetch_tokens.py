@@ -1,6 +1,7 @@
 import os
 import json
 import time
+import subprocess
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -27,6 +28,23 @@ def send_to_server(bearer, sas):
     except Exception as e:
         print(f"❌ Webhook Error: {e}")
 
+def system_check():
+    print("=" * 50)
+    print("🔍 System Check:")
+    print(f"Chromium exists: {os.path.exists('/usr/bin/chromium')}")
+    print(f"ChromeDriver exists: {os.path.exists('/usr/bin/chromedriver')}")
+    try:
+        v = subprocess.check_output(['/usr/bin/chromium', '--version']).decode().strip()
+        print(f"Chromium: {v}")
+    except Exception as e:
+        print(f"Chromium error: {e}")
+    try:
+        v = subprocess.check_output(['/usr/bin/chromedriver', '--version']).decode().strip()
+        print(f"ChromeDriver: {v}")
+    except Exception as e:
+        print(f"ChromeDriver error: {e}")
+    print("=" * 50)
+
 def get_driver():
     opts = Options()
     opts.add_argument("--headless=new")
@@ -39,10 +57,7 @@ def get_driver():
     opts.add_experimental_option("excludeSwitches", ["enable-automation"])
     opts.set_capability('goog:loggingPrefs', {'performance': 'ALL'})
     
-    # Chromium binary path
     opts.binary_location = "/usr/bin/chromium"
-    
-    # Explicit chromedriver path
     service = Service(executable_path="/usr/bin/chromedriver")
     
     driver = webdriver.Chrome(service=service, options=opts)
@@ -51,6 +66,8 @@ def get_driver():
 
 def run_scraper():
     print("🚀 SeeDream Token Extractor Starting...")
+    system_check()
+    
     driver = get_driver()
     auth_token, sas_token = None, None
 
@@ -97,6 +114,8 @@ def run_scraper():
 
     except Exception as e:
         print(f"⚠️ Error: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         driver.quit()
 
